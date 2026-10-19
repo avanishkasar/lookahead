@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lookahead-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: lookahead-controller
+  namespace: lookahead-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: lookahead-controller
+subjects:
+- kind: ServiceAccount
+  name: lookahead-controller
+  namespace: lookahead-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lookahead-controller
+---
+# Leader election needs Leases in the controller's own namespace only.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: lookahead-leader-election
+  namespace: lookahead-system
+rules:
+- apiGroups: ["coordination.k8s.io"]
+  resources: ["leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: lookahead-leader-election
+  namespace: lookahead-system
+subjects:
+- kind: ServiceAccount
+  name: lookahead-controller
+  namespace: lookahead-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: lookahead-leader-election
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lookahead-controller
+  namespace: lookahead-system
+  labels:
+    app: lookahead-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lookahead-controller
+  template:
+    metadata:
+      labels:
+        app: lookahead-controller
+    spec:
+      serviceAccountName: lookahead-controller
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: controller
+        image: lookahead-controller:dev
+        imagePullPolicy: IfNotPresent
+        args:
+        - --leader-elect
+        ports:
+        - name: metrics
+          containerPort: 8080
+        - name: probes
+          containerPort: 8081
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: probes
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: probes
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]

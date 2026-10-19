@@ -1,0 +1,24 @@
+apiVersion: lookahead.avanishkasar.github.io/v1alpha1
+kind: LookaheadPolicy
+metadata:
+  name: python-pool
+spec:
+  poolRef:
+    name: python-sdk-warmpool
+  minReplicas: 2
+  maxReplicas: 100
+  # Time for a new sandbox to become Ready (check agent_sandbox_creation_latency_ms).
+  leadTimeSeconds: 30
+  scaleDownStabilizationSeconds: 120
+  forecast:
+    model: Holt
+---
+# Agents need only this to send hints; they never get access to the pool itself.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: demandhint-writer
+rules:
+- apiGroups: ["lookahead.avanishkasar.github.io"]
+  resources: ["demandhints"]
+  verbs: ["create", "delete"]

@@ -1,0 +1,11 @@
+# "I will need 20 sandboxes from python-sdk-warmpool at neededAt." Usually created with
+# `lookahead hint create`, which sets neededAt relative to now.
+apiVersion: lookahead.avanishkasar.github.io/v1alpha1
+kind: DemandHint
+metadata:
+  generateName: rl-step-
+spec:
+  poolRef:
+    name: python-sdk-warmpool
+  replicas: 20
+  ttlSeconds: 120
