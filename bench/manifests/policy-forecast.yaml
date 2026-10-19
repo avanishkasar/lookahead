@@ -1,0 +1,14 @@
+apiVersion: lookahead.avanishkasar.github.io/v1alpha1
+kind: LookaheadPolicy
+metadata:
+  name: bench-pool
+  namespace: lookahead-bench
+spec:
+  poolRef:
+    name: bench-pool
+  minReplicas: 2
+  maxReplicas: 60
+  leadTimeSeconds: 30
+  scaleDownStabilizationSeconds: 60
+  forecast:
+    model: Holt

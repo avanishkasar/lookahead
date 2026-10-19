@@ -1,0 +1,40 @@
+# Benchmark workload. The readiness delay stands in for a sandbox runtime's start-up work, so a
+# cold start costs about STARTUP seconds plus scheduling, and a warm claim costs only adoption.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lookahead-bench
+---
+apiVersion: extensions.agents.x-k8s.io/v1beta1
+kind: SandboxTemplate
+metadata:
+  name: bench-template
+  namespace: lookahead-bench
+spec:
+  podTemplate:
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: runtime
+        image: busybox:1.37
+        command: ["sh", "-c", "trap 'exit 0' TERM; while true; do sleep 3600 & wait; done"]
+        readinessProbe:
+          exec:
+            command: ["true"]
+          initialDelaySeconds: 20
+          periodSeconds: 1
+        resources:
+          requests:
+            cpu: 5m
+            memory: 8Mi
+      restartPolicy: OnFailure
+---
+# No spec.replicas: the strategy under test owns it (the run script sets it for static runs).
+apiVersion: extensions.agents.x-k8s.io/v1beta1
+kind: SandboxWarmPool
+metadata:
+  name: bench-pool
+  namespace: lookahead-bench
+spec:
+  sandboxTemplateRef:
+    name: bench-template

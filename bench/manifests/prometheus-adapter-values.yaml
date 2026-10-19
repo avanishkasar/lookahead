@@ -1,0 +1,15 @@
+# helm install prometheus-adapter prometheus-community/prometheus-adapter --version 5.3.0 \
+#   -n lookahead-bench -f prometheus-adapter-values.yaml
+prometheus:
+  url: http://prometheus.lookahead-bench.svc
+  port: 9090
+rules:
+  default: false
+  external:
+  - seriesQuery: 'agent_sandbox_claim_creation_total{warmpool_name!=""}'
+    resources:
+      overrides:
+        namespace: {resource: namespace}
+    name:
+      as: agent_sandbox_claim_rate
+    metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (warmpool_name)'

@@ -1,0 +1,25 @@
+# Same sizing rule as the upstream KEDA example: desired = claim_rate / 0.05 = rate x 20s of
+# buffered demand.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: bench-pool
+  namespace: lookahead-bench
+spec:
+  scaleTargetRef:
+    apiVersion: extensions.agents.x-k8s.io/v1beta1
+    kind: SandboxWarmPool
+    name: bench-pool
+  minReplicas: 2
+  maxReplicas: 60
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: agent_sandbox_claim_rate
+        selector:
+          matchLabels:
+            warmpool_name: bench-pool
+      target:
+        type: AverageValue
+        averageValue: "50m"

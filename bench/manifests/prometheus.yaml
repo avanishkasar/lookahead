@@ -1,0 +1,51 @@
+# Minimal Prometheus scraping the agent-sandbox controller every 15s (the scrape interval the
+# upstream HPA/KEDA examples assume). Needed by the HPA and KEDA baselines only.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+  namespace: lookahead-bench
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+    - job_name: agent-sandbox-controller
+      static_configs:
+      - targets: ["agent-sandbox-controller.agent-sandbox-system.svc:8080"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: lookahead-bench
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: prometheus}
+  template:
+    metadata:
+      labels: {app: prometheus}
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v3.5.0
+        args: ["--config.file=/etc/prometheus/prometheus.yml", "--storage.tsdb.retention.time=6h"]
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - {name: config, mountPath: /etc/prometheus}
+      volumes:
+      - name: config
+        configMap: {name: prometheus}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: lookahead-bench
+spec:
+  selector: {app: prometheus}
+  ports:
+  - port: 9090
+    targetPort: 9090
