@@ -65,7 +65,7 @@ if ($ExternalMetrics -eq 'keda') {
     helm uninstall prometheus-adapter -n $ns --ignore-not-found
     kubectl apply --server-side --force-conflicts -f $kedaUrl
     kubectl -n keda rollout status deployment/keda-operator --timeout=300s
-    kubectl -n keda rollout status deployment/keda-operator-metrics-apiserver --timeout=300s
+    kubectl -n keda rollout status deployment/keda-metrics-apiserver --timeout=300s
 } else {
     Write-Host "==> External metrics: prometheus-adapter chart $PrometheusAdapterChartVersion"
     kubectl delete -f $kedaUrl --ignore-not-found
