@@ -1,0 +1,13 @@
+title: Predictive and Hint-Driven Warm Pool Sizing
+kep-number: NNNN
+authors:
+  - "@avanishkasar"
+status: provisional
+creation-date: "2026-10-19"
+reviewers:
+  - TBD
+approvers:
+  - TBD
+see-also:
+  - "https://github.com/kubernetes-sigs/agent-sandbox/issues/1916"
+  - "https://github.com/kubernetes-sigs/agent-sandbox/pull/1979"
