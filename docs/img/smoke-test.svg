@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="340" viewBox="0 0 960 340">
+<rect width="960" height="340" rx="12" fill="#161b22"/>
+<path d="M0,12a12,12 0 0 1 12,-12H948a12,12 0 0 1 12,12V36H0z" fill="#21262d"/>
+<circle cx="22" cy="18" r="5.5" fill="#484f58"/>
+<circle cx="40" cy="18" r="5.5" fill="#484f58"/>
+<circle cx="58" cy="18" r="5.5" fill="#484f58"/>
+<text x="480.0" y="22.0" fill="#8b949e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="middle">PowerShell — minikube profile lookahead</text>
+<text x="20" y="64" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"><tspan fill="#7ee787">$ </tspan><tspan fill="#e6edf3">kubectl apply -f bench/manifests/policy-both.yaml</tspan></text>
+<text x="20" y="83" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">lookaheadpolicy.lookahead.avanishkasar.github.io/bench-pool created</text>
+<text x="20" y="102" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"><tspan fill="#7ee787">$ </tspan><tspan fill="#e6edf3">go run ./cmd/lookahead hint create -n lookahead-bench --pool bench-pool --replicas 5 --in 40s --ttl 1m</tspan></text>
+<text x="20" y="121" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">demandhint/bench-pool-dknrg created (pool bench-pool, 5 replicas, needed at 2026-10-19T19:18:42+05:30, expires …19:19:42+05:30)</text>
+<text x="20" y="140" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"><tspan fill="#7ee787">$ </tspan><tspan fill="#e6edf3">kubectl get lap,dh,swp -n lookahead-bench          # 81 s later</tspan></text>
+<text x="20" y="159" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">NAME                                                          POOL         DESIRED   FORECAST   HINTS   READY   AGE</text>
+<text x="20" y="178" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">lookaheadpolicy.lookahead.avanishkasar.github.io/bench-pool   bench-pool   5                    5       True    104s</text>
+<text x="20" y="197" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"></text>
+<text x="20" y="216" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">NAME                                                           POOL         REPLICAS   NEEDEDAT   AGE</text>
+<text x="20" y="235" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">demandhint.lookahead.avanishkasar.github.io/bench-pool-dknrg   bench-pool   5          41s        81s</text>
+<text x="20" y="254" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"></text>
+<text x="20" y="273" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">NAME                                                    READY   DESIRED   AGE</text>
+<text x="20" y="292" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve">sandboxwarmpool.extensions.agents.x-k8s.io/bench-pool   5       5         3m44s</text>
+<text x="20" y="311" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" xml:space="preserve"># hint expired 19:19:42  →  pool held at 5 through the 60 s stabilization window  →  back to minReplicas (2) at 19:20:40</text>
+</svg>
