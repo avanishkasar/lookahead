@@ -34,6 +34,38 @@ The options people use today both miss:
 
 The orchestrator usually knows the burst is coming. lookahead lets it say so.
 
+## Use it from Claude Code or Codex
+
+The `lookahead` binary is also a stdio **MCP server**, so any coding agent that speaks MCP can
+announce a fan-out before it claims the sandboxes. It then sees what the controller did, in a
+brief and a text card:
+
+```powershell
+claude mcp add lookahead -- lookahead mcp -n my-namespace                  # Claude Code
+# Codex: ~/.codex/config.toml →  [mcp_servers.lookahead]  command = "lookahead"  args = ["mcp", "-n", "my-namespace"]
+```
+
+```text
+Created demandhint/rl-step-7: +6 sandboxes for bench-pool, needed at 16:30:19, counting until 16:30:49.
+lookahead counted it after 300ms: target 2 → 6.
+
+╭─ bench-pool  lookahead-bench  16:30:09
+│ ready     █▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  2 ready · 6 target · max 60
+│ target    6 = forecast 0 + hints 6 (1 active) · clamp [2, 60]
+│ hints     ● rl-step-7            +6    active   needed in 10s · expires in 40s
+╰─
+```
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/dashboard-dark.png">
+  <img alt="lookahead dashboard: ready sandboxes, the target broken into forecast, hints and scale-down hold, a live timeline with hint windows and claim bursts, and the active hints" src="docs/img/dashboard-light.png">
+</picture>
+
+Agents without MCP use the same thing through the shell: `lookahead hint create` and
+`lookahead status`. You can watch it live with `lookahead watch` in a terminal or
+`lookahead dashboard` in the browser. The setup for each agent, a ready-made `AGENTS.md` /
+`CLAUDE.md` snippet and a least-privilege Role are in [docs/agents.md](docs/agents.md).
+
 ## Results
 
 First run: one seed of the `bursty-hinted` trace, which has 151 claims and three bursts of 40 claims, each
@@ -157,8 +189,10 @@ kubectl apply -k config/default    # needs image lookahead-controller:dev (see b
 | `internal/arrivals` | per-pool claim arrival counter |
 | `internal/controller` | policy and hint-expiry reconcilers |
 | `internal/trace`, `internal/replay` | trace generator, replayer, summary and report |
+| `internal/inspect` | live pool snapshots, the brief and the text card |
+| `internal/mcpserver`, `internal/dashboard` | MCP server for agents; localhost web dashboard |
 | `cmd/lookahead-controller` | controller manager |
-| `cmd/lookahead` | CLI: `hint`, `trace generate`, `replay`, `report` |
+| `cmd/lookahead` | CLI: `hint`, `status`, `watch`, `dashboard`, `mcp`, `trace generate`, `replay`, `report` |
 | `bench/` | benchmark setup, baselines and runner ([bench/README.md](bench/README.md)) |
 | `docs/` | KEP and issue drafts, README figures |
 
@@ -167,6 +201,7 @@ kubectl apply -k config/default    # needs image lookahead-controller:dev (see b
 - [x] LookaheadPolicy and DemandHint controllers, Holt forecast, scale-down stabilization
 - [x] Benchmark harness: trace generator, replayer, static, KEDA and HPA baselines
 - [x] First run on `bursty-hinted`
+- [x] MCP server for Claude Code, Codex and other agents; `status`, `watch` and a web dashboard
 - [ ] 3 seeds × 3 traces (`steady`, `bursty-hinted`, `bursty-unhinted`) and the HPA baseline
 - [ ] A "claims waiting > 5 s" column in the generated report
 - [ ] Upstream proposal to agent-sandbox
