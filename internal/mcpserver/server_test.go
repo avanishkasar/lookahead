@@ -127,7 +127,7 @@ func TestCreateListDeleteHint(t *testing.T) {
 	if isErr {
 		t.Fatalf("tool error: %s", out)
 	}
-	for _, want := range []string{"Created demandhint/rl-step: +40 sandboxes for bench-pool", "starts counting it in 15s (30 s lead", "○ rl-step"} {
+	for _, want := range []string{"Created demandhint/rl-step: +40 sandboxes for bench-pool", "starts counting it in 15s (30 s lead", "Start creating the claims at", "(in 45s)", "○ rl-step"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("create_hint missing %q:\n%s", want, out)
 		}

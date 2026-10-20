@@ -145,8 +145,14 @@ func hintCreate(ctx context.Context, args []string, out io.Writer) error {
 	if err := c.Create(ctx, h); err != nil {
 		return fmt.Errorf("create DemandHint: %w", err)
 	}
-	_, err = fmt.Fprintf(out, "demandhint/%s created (pool %s, %d replicas, needed at %s, expires %s)\n",
-		h.Name, *pool, *replicas, h.NeededTime().Format(time.RFC3339), h.ExpiryTime().Format(time.RFC3339))
+	if _, err := fmt.Fprintf(out, "demandhint/%s created (pool %s, %d replicas, needed at %s, expires %s)\n",
+		h.Name, *pool, *replicas, h.NeededTime().Format(time.RFC3339), h.ExpiryTime().Format(time.RFC3339)); err != nil {
+		return err
+	}
+	if wait := time.Until(h.NeededTime()); wait > time.Second {
+		_, err = fmt.Fprintf(out, "Start creating the claims at %s (in %s), when the pool should be warm.\n",
+			h.NeededTime().Format("15:04:05"), wait.Round(time.Second))
+	}
 	return err
 }
 

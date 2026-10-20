@@ -187,6 +187,10 @@ func (s *server) createHint(ctx context.Context, _ *mcp.CallToolRequest, in Crea
 		} else if s.cfg.PickupTimeout > 0 {
 			fmt.Fprintf(&b, "The controller has not counted it yet after %s; check pool_status shortly.\n", inspect.Short(s.cfg.PickupTimeout))
 		}
+		if wait := h.NeededTime().Sub(s.cfg.Now()); wait > time.Second {
+			fmt.Fprintf(&b, "Start creating the claims at %s (in %s), when the pool should be warm.\n",
+				h.NeededTime().Format("15:04:05"), inspect.Short(wait))
+		}
 	}
 
 	snap, err := inspect.Collect(ctx, s.c, req.Namespace, req.Pool, s.cfg.Now())
