@@ -1,0 +1,1 @@
+We're about to run an evaluation that needs 30 sandboxes at once from the warm pool bench-pool in namespace lookahead-bench. Run it with `pwsh -File bench/agent-demo/fanout.ps1 -Count 30 -Label {label}`, then tell me how long the sandboxes took to become ready.
