@@ -61,6 +61,18 @@ lookahead counted it after 300ms: target 2 → 6.
   <img alt="lookahead dashboard: ready sandboxes, the target broken into forecast, hints and scale-down hold, a live timeline with hint windows and claim bursts, and the active hints" src="docs/img/dashboard-light.png">
 </picture>
 
+**Tested in real Claude Code and Codex sessions.** Both got the same plain task: claim 30
+sandboxes at once. Neither was told about lookahead. With the MCP server attached (plus the
+`AGENTS.md` snippet for Codex), each sent a hint first, waited, and every claim was served
+warm:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/agents-latency-dark.svg">
+  <img alt="Every claim's wait for a Ready sandbox: without a hint 28 of 30 claims wait 20 to 28 seconds; with Claude Code or Codex sending a hint through the MCP server, all 30 are ready in under a second" src="docs/img/agents-latency-light.svg">
+</picture>
+
+Sessions, timelines and caveats are in [docs/agent-demo.md](docs/agent-demo.md).
+
 Agents without MCP use the same thing through the shell: `lookahead hint create` and
 `lookahead status`. You can watch it live with `lookahead watch` in a terminal or
 `lookahead dashboard` in the browser. The setup for each agent, a ready-made `AGENTS.md` /

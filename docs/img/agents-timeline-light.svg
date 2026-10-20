@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="578" viewBox="0 0 880 578">
+<rect width="880" height="578" rx="12" fill="#fcfcfb"/>
+<path d="M52,24h18" stroke="#2a78d6" stroke-width="2" stroke-linecap="round"/><text x="76.0" y="28.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="start">ready warm sandboxes</text>
+<path d="M220,24h18" stroke="#898781" stroke-width="1.5" stroke-linecap="round"/><text x="244.0" y="28.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="start">pool target</text>
+<rect x="330" y="18" width="16" height="12" fill="rgba(235,104,52,0.12)"/><path d="M330,18h16" stroke="#eb6834" stroke-width="2"/><text x="354.0" y="28.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="start">hint counting, ▼ needed at</text>
+<path d="M531,17V31" stroke="#0b0b0b" stroke-width="1.5"/><text x="540.0" y="28.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="start">30 claims sent</text>
+<text x="52.0" y="58.0" fill="#0b0b0b" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="13" font-weight="600" text-anchor="start">No hint  ·  the same fan-out without lookahead</text>
+<text x="860.0" y="58.0" fill="#d03b3b" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="600" text-anchor="end">p50 24.5 s · p95 28.1 s · 28 of 30 waited &gt; 5 s</text>
+<path d="M52,182.0H860" stroke="#c3c2b7" stroke-width="1"/>
+<text x="44.0" y="186.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">0</text>
+<path d="M52,144.7H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="148.7" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">20</text>
+<path d="M52,107.3H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="111.3" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">40</text>
+<path d="M52,70.0H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="74.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">60</text>
+<path d="M52.0,178.3H462.9V70.0H747.8" fill="none" stroke="#898781" stroke-width="1.5"/>
+<path d="M52.0,178.3H439.9V182.0H633.1V180.1H643.5V178.3H685.7V157.7H699.3V114.8H712.1V112.9H724.0V107.3H735.8V96.1H747.8V92.4H747.8" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<path d="M434.7,66V182" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="52.0" y="226.0" fill="#0b0b0b" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="13" font-weight="600" text-anchor="start">Claude Code + lookahead MCP  ·  hinted on its own</text>
+<text x="860.0" y="226.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="end">p50 0.3 s · p95 1.0 s · 0 of 30 waited &gt; 5 s</text>
+<rect x="120.7" y="238" width="739.3" height="112" fill="rgba(235,104,52,0.12)"/>
+<path d="M370.9,229h10l-5,8z" fill="#eb6834"/><text x="367.9" y="236.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">+30 hint, needed at</text>
+<path d="M52,350.0H860" stroke="#c3c2b7" stroke-width="1"/>
+<text x="44.0" y="354.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">0</text>
+<path d="M52,312.7H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="316.7" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">20</text>
+<path d="M52,275.3H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="279.3" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">40</text>
+<path d="M52,238.0H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="242.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">60</text>
+<path d="M52.0,346.3H128.9V294.0H448.3V264.1H482.4V238.0H860.0" fill="none" stroke="#898781" stroke-width="1.5"/>
+<path d="M52.0,346.3H317.9V316.4H328.3V294.0H448.3V308.9H459.4V350.0H622.9V348.1H633.4V346.3H643.8V338.8H655.0V336.9H665.4V318.3H675.9V294.0H687.3V264.1H700.0V258.5H714.5V254.8H726.4V243.6H738.3V238.0H860.0" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<path d="M434.7,234V350" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="52.0" y="394.0" fill="#0b0b0b" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="13" font-weight="600" text-anchor="start">Codex + lookahead MCP + AGENTS.md snippet</text>
+<text x="860.0" y="394.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" font-weight="400" text-anchor="end">p50 0.3 s · p95 0.8 s · 0 of 30 waited &gt; 5 s</text>
+<rect x="147.6" y="406" width="712.4" height="112" fill="rgba(235,104,52,0.12)"/>
+<path d="M397.7,397h10l-5,8z" fill="#eb6834"/><text x="394.7" y="404.0" fill="#52514e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">+30 hint, needed at</text>
+<path d="M52,518.0H860" stroke="#c3c2b7" stroke-width="1"/>
+<text x="44.0" y="522.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">0</text>
+<path d="M52,480.7H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="484.7" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">20</text>
+<path d="M52,443.3H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="447.3" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">40</text>
+<path d="M52,406.0H860" stroke="#e1e0d9" stroke-width="1"/>
+<text x="44.0" y="410.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="end">60</text>
+<path d="M52.0,514.3H158.7V462.0H453.5V406.0H857.5" fill="none" stroke="#898781" stroke-width="1.5"/>
+<path d="M52.0,514.3H335.3V508.7H345.7V462.0H440.9V473.2H453.5V510.5H464.2V518.0H624.8V516.1H635.2V514.3H645.5V506.8H656.8V504.9H667.3V499.3H677.7V465.7H689.1V441.5H702.7V437.7H715.5V428.4H727.4V409.7H739.3V406.0H857.5" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linejoin="round"/>
+<path d="M434.7,402V518" stroke="#0b0b0b" stroke-width="1.5"/>
+<text x="94.5" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">-40 s</text>
+<text x="179.6" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">-30 s</text>
+<text x="264.6" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">-20 s</text>
+<text x="349.7" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">-10 s</text>
+<text x="434.7" y="550.0" fill="#0b0b0b" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="600" text-anchor="middle">fan-out</text>
+<text x="519.8" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">+10 s</text>
+<text x="604.8" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">+20 s</text>
+<text x="689.9" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">+30 s</text>
+<text x="774.9" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">+40 s</text>
+<text x="860.0" y="550.0" fill="#898781" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="11" font-weight="400" text-anchor="middle">+50 s</text>
+</svg>

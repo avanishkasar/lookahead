@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="365" viewBox="0 0 960 365">
+<rect width="960" height="365" rx="12" fill="#161b22"/>
+<path d="M0,12a12,12 0 0 1 12,-12H948a12,12 0 0 1 12,12V36H0z" fill="#21262d"/>
+<circle cx="22" cy="18" r="5.5" fill="#484f58"/>
+<circle cx="40" cy="18" r="5.5" fill="#484f58"/>
+<circle cx="58" cy="18" r="5.5" fill="#484f58"/>
+<text x="480.0" y="22" fill="#8b949e" font-family='system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif' font-size="12" text-anchor="middle">codex exec · lookahead MCP attached + AGENTS.md snippet · abridged transcript</text>
+<text x="20" y="64" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">› We're about to run an evaluation that needs 30 sandboxes at once from the warm pool bench-pool … (task does not mention</text>
+<text x="20" y="83" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  lookahead)</text>
+<text x="20" y="102" fill="#e6edf3" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">I’ll first schedule the required warm-pool hint, wait until its announced start time, then run the fanout and report …</text>
+<text x="20" y="121" fill="#79c0ff" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="600" xml:space="preserve">● lookahead · create_hint(pool=bench-pool, replicas=30, in_seconds=45, ttl_seconds=120)</text>
+<text x="20" y="140" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ Created demandhint/bench-pool-6nr5m: +30 sandboxes for bench-pool, needed at 17:05:55, counting until 17:07:55.</text>
+<text x="20" y="159" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ lookahead starts counting it in 14s (30 s lead before the needed time).</text>
+<text x="20" y="178" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ Start creating the claims at 17:05:55 (in 44s), when the pool should be warm.</text>
+<text x="20" y="197" fill="#79c0ff" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="600" xml:space="preserve">● lookahead · list_hints(pool=bench-pool)</text>
+<text x="20" y="216" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ 1 DemandHint(s) in lookahead-bench:</text>
+<text x="20" y="235" fill="#79c0ff" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="600" xml:space="preserve">● pwsh -File bench/agent-demo/fanout.ps1 -Count 30 -Label codex</text>
+<text x="20" y="254" fill="#7ee787" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ 30 sandboxes: p50 0.3 s, p95 0.8 s, slowest 0.8 s; 0 of 30 waited more than 5 s; 0 cold starts.</text>
+<text x="20" y="273" fill="#79c0ff" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="600" xml:space="preserve">● lookahead · pool_status(pool=bench-pool)</text>
+<text x="20" y="292" fill="#8b949e" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  ⎿ bench-pool: 52 of 60 warm sandboxes ready; lookahead targets 60 = forecast 0 + hints 30 (1 active), clamped to [2, 60…</text>
+<text x="20" y="311" fill="#7ee787" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">The fanout completed successfully. All 30 sandboxes were ready with p50 0.3 s, p95 0.8 s, and slowest 0.8 s; none waited more</text>
+<text x="20" y="330" fill="#7ee787" font-family='ui-monospace, "SFMono-Regular", "Cascadia Mono", Consolas, Menlo, monospace' font-size="12.5" font-weight="400" xml:space="preserve">  than 5 seconds, and the…</text>
+</svg>

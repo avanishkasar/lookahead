@@ -96,11 +96,12 @@ Put this in the project's `AGENTS.md` (read by Codex) or `CLAUDE.md` (read by Cl
 Before creating more than a handful of SandboxClaims from one warm pool at once (a batch of evals,
 an RL step, a fan-out), announce it so lookahead warms the pool first:
 
-- MCP: call lookahead `create_hint` with the pool, the number of sandboxes and `in_seconds` of at
-  least 30 (the pool's lead time).
+- MCP (preferred, if the lookahead server is connected): call `create_hint` with the pool, the
+  number of sandboxes and `in_seconds` of at least 30 (the pool's lead time).
 - Shell: `lookahead hint create -n <namespace> --pool <pool> --replicas <n> --in 45s --ttl 2m`
 
-Afterwards, show the user `pool_status` (or `lookahead status -n <namespace>`). If the work is
+Then wait until the hint's needed time (both print "Start creating the claims at …") before
+creating the claims; the pool is still warming before that. Afterwards, show the user `pool_status` (or `lookahead status -n <namespace>`). If the work is
 cancelled, delete the hint.
 ```
 
