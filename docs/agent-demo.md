@@ -12,23 +12,22 @@ hint, which is what an agent does without lookahead.
 ## Result
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="img/agents-latency-dark.svg">
-  <img alt="Every claim's wait for a Ready sandbox. Without a hint, 28 of 30 claims wait 20 to 28 seconds. With Claude Code plus the MCP server, and with Codex plus the MCP server and the AGENTS.md snippet, all 30 claims are ready in under a second. Codex with the MCP server alone did not hint and looks like the baseline." src="img/agents-latency-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="img/race-dark.svg">
+  <img alt="Animated: an agent asks for 30 sandboxes at once. Without lookahead 28 of the 30 squares turn red and the typical wait is 24 seconds. With Claude Code or Codex giving lookahead a heads-up first, all 30 squares turn green within a second." src="img/race-light.svg">
 </picture>
 
-| Run | Hinted? | p50 | p95 | Waited > 5 s | Cold starts |
-|---|---|---:|---:|---:|---:|
-| No hint (run 1) | no | 24.1 s | 28.0 s | 28 of 30 | 28 |
-| No hint (run 2) | no | 24.5 s | 28.1 s | 28 of 30 | 24 |
-| **Claude Code + MCP** | **on its own, via MCP** | **0.34 s** | **0.96 s** | **0 of 30** | **0** |
-| Codex + MCP | no; ran the script directly | 22.7 s | 23.9 s | 28 of 30 | 24 |
-| Codex + MCP + first snippet | yes, via the shell, but claimed at once | 22.6 s | 25.8 s | 28 of 30 | 24 |
-| **Codex + MCP + `AGENTS.md` snippet** | **yes, via MCP, and waited** | **0.28 s** | **0.76 s** | **0 of 30** | **0** |
+| Run | Gave a heads-up? | Typical wait | Sandboxes that kept it waiting |
+|---|---|---:|---:|
+| No lookahead (run 1) | no | 24 s | 28 of 30 |
+| No lookahead (run 2) | no | 25 s | 28 of 30 |
+| **Claude Code + lookahead** | **yes, on its own** | **0.3 s** | **none** |
+| Codex + lookahead | no, ran the script straight away | 23 s | 28 of 30 |
+| Codex + lookahead + first snippet | yes, but asked for the sandboxes at once | 23 s | 28 of 30 |
+| **Codex + lookahead + `AGENTS.md` snippet** | **yes, and waited** | **0.3 s** | **none** |
 
-**Hinted the right way, a 30-sandbox fan-out goes from about 24 s at p50 to under half a
-second, with no claim waiting.** It costs about 5 extra idle sandbox-minutes per fan-out:
-30 sandboxes sit warm for the ~40 s between the hint and the claims. In the 45 s before the
-fan-out, idle sandbox-minutes were 6.1 (Claude Code) and 5.5 (Codex) against 1.2 without a hint.
+**With a heads-up at the right time, the agent gets all 30 sandboxes in under half a second
+instead of waiting about 24 seconds.** The price: 30 sandboxes sit warm for the ~40 s between
+the heads-up and the requests, about 5 extra sandbox-minutes per batch.
 
 ## What happened in each session
 
@@ -73,6 +72,8 @@ waited, and every claim was served from the warm pool.
 - **Sandbox setting for Codex:** on Windows, Codex's `workspace-write` sandbox cannot read
   `~/.kube/config`, so these runs used `--sandbox danger-full-access` for shell commands. The
   Claude Code runs allowed the MCP tools and its shell tools.
+
+Full numbers for each run are in [bench/README.md](../bench/README.md#agent-demo).
 
 ## Reproduce
 
