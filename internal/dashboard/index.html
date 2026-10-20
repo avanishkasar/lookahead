@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>lookahead dashboard</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --raised: #f3f2ef;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --ready: #2a78d6; --hints: #eb6834; --forecast: #1baf7a; --hold: #c3c2b7;
+  --good: #0ca30c; --good-ink: #006300; --warning: #fab219; --critical: #d03b3b;
+  --hint-band: rgba(235,104,52,0.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --raised: #232321;
+    --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --ready: #3987e5; --hints: #d95926; --forecast: #199e70; --hold: #52514e;
+    --good-ink: #0ca30c; --hint-band: rgba(217,89,38,0.16);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --raised: #232321;
+  --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --ready: #3987e5; --hints: #d95926; --forecast: #199e70; --hold: #52514e;
+  --good-ink: #0ca30c; --hint-band: rgba(217,89,38,0.16);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--page); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
+header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 650; font-size: 18px; letter-spacing: -0.01em; }
+.chip { font-size: 12px; color: var(--ink-2); background: var(--raised); border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; }
+.live { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 0 rgba(12,163,12,0.5); animation: pulse 2s infinite; }
+.dot.stale { background: var(--critical); animation: none; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(12,163,12,0.45); } 70% { box-shadow: 0 0 0 8px rgba(12,163,12,0); } 100% { box-shadow: 0 0 0 0 rgba(12,163,12,0); } }
+@media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+.banner { border: 1px solid var(--critical); color: var(--ink); background: var(--surface); border-radius: 10px; padding: 10px 14px; margin-bottom: 16px; }
+.pool { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+.pool-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pool-head h2 { font-size: 17px; margin: 0; font-weight: 650; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; border-radius: 999px; padding: 2px 10px; border: 1px solid var(--border); background: var(--raised); color: var(--ink-2); }
+.pill svg { width: 12px; height: 12px; }
+.pill.good { color: var(--good-ink); }
+.pill.warn { color: var(--ink); }
+.pill.bad { color: var(--critical); }
+.brief { color: var(--ink-2); margin: 8px 0 16px; max-width: 80ch; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.tile { background: var(--raised); border-radius: 10px; padding: 12px 14px; }
+.tile .k { font-size: 12px; color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+.tile .v { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; margin-top: 2px; }
+.tile .v small { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.tile .s { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+h3 { font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 18px 0 8px; }
+.why { position: relative; }
+.why-bar { display: flex; gap: 2px; height: 14px; border-radius: 4px; background: var(--raised); overflow: hidden; }
+.why-bar span { height: 100%; }
+.why-bar span:first-child { border-radius: 4px 0 0 4px; }
+.why-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12px; color: var(--ink-2); }
+.why-legend b { color: var(--ink); font-weight: 600; }
+.why-scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; font-variant-numeric: tabular-nums; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-size: 11px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
+.legend i { display: inline-block; vertical-align: middle; margin-right: 6px; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); white-space: nowrap; display: none; z-index: 2; }
+.tip b { font-weight: 600; }
+.tip .row { display: flex; justify-content: space-between; gap: 16px; color: var(--ink-2); }
+.tip .row span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { text-align: left; font-weight: 600; color: var(--ink-2); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+td { padding: 6px 8px; border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+td.num, th.num { text-align: right; }
+.phase { display: inline-flex; align-items: center; gap: 6px; }
+.empty { color: var(--muted); font-size: 13px; }
+.scroll { overflow-x: auto; }
+footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 8px; }
+code { font: 12px ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <rect x="2" y="14" width="5" height="10" rx="1.5" fill="var(--ready)" opacity="0.45"/>
+        <rect x="10.5" y="9" width="5" height="15" rx="1.5" fill="var(--ready)" opacity="0.7"/>
+        <rect x="19" y="3" width="5" height="21" rx="1.5" fill="var(--ready)"/>
+      </svg>
+      lookahead
+    </div>
+    <span class="chip" id="ns">namespace …</span>
+    <div class="live"><span class="dot" id="dot"></span><span id="updated">connecting…</span></div>
+  </header>
+  <div id="banner"></div>
+  <main id="pools"><p class="empty">Loading…</p></main>
+  <footer>Read-only view of the Kubernetes API through your kubeconfig. Refreshes every second.</footer>
+</div>
+<script>
+"use strict";
+const theme = new URLSearchParams(location.search).get("theme");
+if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ms = (t) => new Date(t).getTime();
+const clock = (t) => new Date(t).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"});
+function short(d) {
+  d = Math.round(Math.abs(d) / 1000);
+  if (d < 60) return d + "s";
+  if (d < 3600) return Math.floor(d / 60) + "m" + String(d % 60).padStart(2, "0") + "s";
+  return Math.floor(d / 3600) + "h" + String(Math.floor(d / 60) % 60).padStart(2, "0") + "m";
+}
+const icons = {
+  check: '<svg viewBox="0 0 12 12"><path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  pause: '<svg viewBox="0 0 12 12"><rect x="3" y="2.5" width="2" height="7" rx="1" fill="currentColor"/><rect x="7" y="2.5" width="2" height="7" rx="1" fill="currentColor"/></svg>',
+  warn: '<svg viewBox="0 0 12 12"><path d="M6 1.5L11 10.5H1z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6 5v2.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="6" cy="9" r=".8" fill="currentColor"/></svg>',
+  dash: '<svg viewBox="0 0 12 12"><path d="M3 6h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+};
+
+let state = null;
+const hover = {};   // pool -> x fraction of the chart, or undefined
+
+function status(snap) {
+  const p = snap.policy;
+  if (!snap.poolFound) return ["bad", icons.warn, "Pool not found"];
+  if (!p) return ["", icons.dash, "No policy"];
+  if (!p.reconciled) return ["warn", icons.pause, "Waiting for controller"];
+  if (p.conflict) return ["bad", icons.warn, "Not scaling: conflict"];
+  if (!p.ready) return ["bad", icons.warn, "Policy not ready"];
+  const raw = Math.min(Math.max(p.forecastReplicas + p.hintReplicas, p.minReplicas), p.maxReplicas);
+  if (p.desiredReplicas > raw) return ["warn", icons.pause, "Holding for scale-down"];
+  return ["good", icons.check, "Scaling"];
+}
+
+function tiles(ps) {
+  const s = ps.snapshot, p = s.policy, now = ms(state.now);
+  const lastMin = ps.claims.filter((c) => now - ms(c.created) <= 60000).length;
+  const waiting = ps.claims.filter((c) => !c.ready).length;
+  const tile = (sw, k, v, sub) => `<div class="tile"><div class="k">${sw ? `<span class="sw" style="background:${sw}"></span>` : ""}${k}</div><div class="v">${v}</div><div class="s">${sub}</div></div>`;
+  let out = tile("var(--ready)", "Ready warm sandboxes", `${s.readyReplicas}<small> / ${s.specReplicas}</small>`, `${Math.max(s.specReplicas - s.readyReplicas, 0)} starting · ${s.replicas} in pool`);
+  if (p) {
+    out += tile("", "Target", `${p.desiredReplicas}`, `bounds ${p.minReplicas}–${p.maxReplicas}`);
+    out += tile("var(--forecast)", "Forecast", `+${p.forecastReplicas}`, p.model === "None" ? "off · hints only" : `${esc(p.model)} · ${p.leadTimeSeconds} s lead`);
+    out += tile("var(--hints)", "Hints", `+${p.hintReplicas}`, `${p.activeHints} active · ${s.hints.filter((h) => now < ms(h.countsFrom)).length} pending`);
+  }
+  out += tile("", "Claims", `${lastMin}<small> /min</small>`, waiting ? `<span style="color:var(--critical)">${waiting} waiting for a sandbox</span>` : "none waiting");
+  return `<div class="tiles">${out}</div>`;
+}
+
+function why(p) {
+  if (!p || p.conflict) return "";
+  const top = Math.max(p.maxReplicas, p.desiredReplicas, 1);
+  const raw = Math.min(Math.max(p.forecastReplicas + p.hintReplicas, p.minReplicas), p.maxReplicas);
+  const f = Math.min(p.forecastReplicas, raw), h = Math.min(p.hintReplicas, raw - f);
+  const floor = raw - f - h, hold = Math.max(p.desiredReplicas - raw, 0);
+  const seg = (n, color, label) => n > 0 ? `<span style="width:${(n / top) * 100}%;background:${color}" title="${label}: ${n}"></span>` : "";
+  const legend = [
+    `<span><span class="sw" style="background:var(--forecast)"></span> forecast <b>${p.forecastReplicas}</b></span>`,
+    `<span><span class="sw" style="background:var(--hints)"></span> hints <b>${p.hintReplicas}</b></span>`,
+  ];
+  if (floor > 0) legend.push(`<span><span class="sw" style="background:var(--axis)"></span> minReplicas floor <b>+${floor}</b></span>`);
+  if (hold > 0) legend.push(`<span><span class="sw" style="background:var(--hold)"></span> held for scale-down <b>+${hold}</b></span>`);
+  legend.push(`<span>= target <b>${p.desiredReplicas}</b> of max ${p.maxReplicas}</span>`);
+  return `<h3>Why ${p.desiredReplicas}?</h3><div class="why"><div class="why-bar" role="img" aria-label="Target ${p.desiredReplicas}: forecast ${p.forecastReplicas}, hints ${p.hintReplicas}">` +
+    seg(f, "var(--forecast)", "forecast") + seg(h, "var(--hints)", "hints") + seg(floor, "var(--axis)", "minReplicas floor") + seg(hold, "var(--hold)", "held for scale-down") +
+    `</div><div class="why-scale"><span>0</span><span>${top}</span></div><div class="why-legend">${legend.join("")}</div></div>`;
+}
+
+const W = 1000, H = 240, L = 36, R = 12, T = 18, PB = 168, RUG = 196, XA = 226;
+
+function niceTicks(top) {
+  const step = top <= 4 ? 1 : top <= 10 ? 2 : top <= 25 ? 5 : top <= 60 ? 10 : top <= 150 ? 25 : 50;
+  const out = [];
+  for (let v = 0; v <= top; v += step) out.push(v);
+  return out;
+}
+
+// The time window grows with the data, from 2 minutes up to the server's window; the y axis fits
+// the data with some headroom (the "Why" bar already shows maxReplicas).
+function geometry(ps) {
+  const now = ms(state.now), first = ps.samples.length ? ms(ps.samples[0].at) : now;
+  const mins = Math.min(Math.max(Math.ceil((now - first) / 60000), 2), state.windowSeconds / 60);
+  const win = mins * 60000, t0 = now - win;
+  const s = ps.snapshot, p = s.policy;
+  let top = Math.max(4, s.specReplicas, s.readyReplicas, p ? p.desiredReplicas : 0,
+    ...ps.samples.map((x) => Math.max(x.specReplicas, x.readyReplicas)));
+  top = Math.ceil(top * 1.15);
+  const ticks = niceTicks(top);
+  top = ticks[ticks.length - 1] < top ? ticks[ticks.length - 1] + (ticks[1] - ticks[0]) : top;
+  if (!ticks.includes(top)) ticks.push(top);
+  const x = (t) => L + ((t - t0) / win) * (W - L - R);
+  const y = (v) => PB - (v / top) * (PB - T);
+  return {now, win, mins, t0, top, ticks, x, y};
+}
+
+function stepPath(samples, key, g) {
+  if (!samples.length) return "";
+  let d = `M${g.x(ms(samples[0].at)).toFixed(1)},${g.y(samples[0][key]).toFixed(1)}`;
+  let prev = samples[0][key];
+  for (const sm of samples.slice(1)) {
+    if (sm[key] !== prev) { d += `H${g.x(ms(sm.at)).toFixed(1)}V${g.y(sm[key]).toFixed(1)}`; prev = sm[key]; }
+  }
+  return d + `H${g.x(ms(samples[samples.length - 1].at)).toFixed(1)}`;
+}
+
+function timeline(ps, name) {
+  const g = geometry(ps);
+  const s = [];
+  for (const v of g.ticks) {
+    s.push(`<line x1="${L}" x2="${W - R}" y1="${g.y(v)}" y2="${g.y(v)}" stroke="${v ? "var(--grid)" : "var(--axis)"}"/>`);
+    s.push(`<text x="${L - 8}" y="${g.y(v) + 4}" text-anchor="end">${v}</text>`);
+  }
+  const mins = g.mins;
+  for (let m = 0; m <= mins; m++) {
+    const t = g.t0 + m * 60000, xx = g.x(t);
+    s.push(`<line x1="${xx}" x2="${xx}" y1="${T}" y2="${PB}" stroke="var(--grid)"/>`);
+    if (m < mins) s.push(`<text x="${xx}" y="${XA}" text-anchor="middle">−${mins - m}m</text>`);
+  }
+  s.push(`<text x="${W - R}" y="${XA}" text-anchor="end">now</text>`);
+  for (const h of ps.hints) {
+    const a = Math.max(g.x(ms(h.countsFrom)), L), b = Math.min(g.x(ms(h.expires)), W - R);
+    if (b <= L || a >= W - R) continue;
+    s.push(`<rect x="${a}" y="${T}" width="${b - a}" height="${PB - T}" fill="var(--hint-band)"/>`);
+    const n = g.x(ms(h.neededAt));
+    if (n >= L && n <= W - R) {
+      s.push(`<path d="M${n - 5},${T - 10}h10l-5,8z" fill="var(--hints)"/>`);
+      s.push(`<text x="${n + 8}" y="${T - 2}" style="fill:var(--ink-2)">+${h.replicas}</text>`);
+    }
+  }
+  s.push(`<path d="${stepPath(ps.samples, "specReplicas", g)}" fill="none" stroke="var(--muted)" stroke-width="1.5"/>`);
+  s.push(`<path d="${stepPath(ps.samples, "readyReplicas", g)}" fill="none" stroke="var(--ready)" stroke-width="2" stroke-linejoin="round"/>`);
+  for (const c of ps.claims) {
+    const xx = g.x(ms(c.created));
+    if (xx < L) continue;
+    s.push(`<rect x="${xx - 1}" y="${RUG - 7}" width="2" height="14" rx="1" fill="${c.ready ? "var(--muted)" : "var(--critical)"}"/>`);
+  }
+  s.push(`<text x="${L - 8}" y="${RUG + 4}" text-anchor="end">claims</text>`);
+  s.push(`<g class="cross" data-pool="${esc(name)}"></g>`);
+  s.push(`<rect class="hit" data-pool="${esc(name)}" x="${L}" y="0" width="${W - L - R}" height="${H}" fill="transparent"/>`);
+  return `<h3>Last ${mins} minutes</h3>
+    <div class="legend">
+      <span><i style="width:16px;height:2px;background:var(--ready)"></i>ready warm sandboxes</span>
+      <span><i style="width:16px;height:2px;background:var(--muted)"></i>pool target (spec.replicas)</span>
+      <span><i style="width:14px;height:10px;background:var(--hint-band);border-top:2px solid var(--hints)"></i>hint counting window, ▼ needed at</span>
+      <span><i style="width:2px;height:12px;background:var(--critical)"></i>claim waiting for a sandbox</span>
+    </div>
+    <div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Pool size over the last ${mins} minutes">${s.join("")}</svg><div class="tip"></div></div>`;
+}
+
+function hintsTable(ps) {
+  const now = ms(state.now);
+  if (!ps.snapshot.hints.length) return `<h3>Hints</h3><p class="empty">No DemandHints for this pool. Send one with <code>lookahead hint create</code> or the <code>create_hint</code> MCP tool.</p>`;
+  const rows = ps.snapshot.hints.map((h) => {
+    const from = ms(h.countsFrom), exp = ms(h.expires), need = ms(h.neededAt);
+    const [ph, color] = now < from ? ["pending", "var(--muted)"] : now < exp ? ["active", "var(--hints)"] : ["expired", "var(--axis)"];
+    const rel = (t) => (t > now ? "in " : "") + short(t - now) + (t > now ? "" : " ago");
+    return `<tr><td>${esc(h.name)}</td><td class="num">+${h.replicas}</td><td><span class="phase"><span class="sw" style="background:${color};border-radius:50%"></span>${ph}</span></td><td>${rel(from)}</td><td>${rel(need)}</td><td>${rel(exp)}</td></tr>`;
+  }).join("");
+  return `<h3>Hints</h3><div class="scroll"><table><thead><tr><th>Name</th><th class="num">Replicas</th><th>Phase</th><th>Counts from</th><th>Needed</th><th>Expires</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function render() {
+  $("ns").textContent = "namespace " + state.namespace;
+  $("banner").innerHTML = state.error ? `<div class="banner">Last refresh failed: ${esc(state.error)}</div>` : "";
+  if (!state.pools.length) {
+    $("pools").innerHTML = `<div class="pool"><p class="empty">No SandboxWarmPools in this namespace yet. Apply a <code>LookaheadPolicy</code> to have lookahead size one.</p></div>`;
+    return;
+  }
+  $("pools").innerHTML = state.pools.map((ps) => {
+    const s = ps.snapshot, [cls, icon, label] = status(s);
+    return `<section class="pool"><div class="pool-head"><h2>${esc(s.pool)}</h2><span class="pill ${cls}">${icon}${label}</span>${s.policy ? `<span class="chip">policy ${esc(s.policy.name)}</span>` : ""}</div>
+      <p class="brief">${esc(ps.brief)}</p>${tiles(ps)}${why(s.policy)}${timeline(ps, s.pool)}${hintsTable(ps)}</section>`;
+  }).join("");
+  for (const name of Object.keys(hover)) drawCross(name);
+}
+
+function drawCross(name) {
+  const ps = state && state.pools.find((p) => p.snapshot.pool === name);
+  const g0 = document.querySelector(`.cross[data-pool="${CSS.escape(name)}"]`);
+  if (!ps || !g0) return;
+  const tip = g0.closest(".chart").querySelector(".tip");
+  const f = hover[name];
+  if (f === undefined || !ps.samples.length) { g0.innerHTML = ""; tip.style.display = "none"; return; }
+  const g = geometry(ps), t = g.t0 + f * g.win;
+  let best = ps.samples[0];
+  for (const sm of ps.samples) if (Math.abs(ms(sm.at) - t) < Math.abs(ms(best.at) - t)) best = sm;
+  const xx = g.x(ms(best.at));
+  g0.innerHTML = `<line x1="${xx}" x2="${xx}" y1="${T}" y2="${PB}" stroke="var(--ink-2)" stroke-width="1"/>` +
+    `<circle cx="${xx}" cy="${g.y(best.readyReplicas)}" r="6" fill="var(--surface)"/><circle cx="${xx}" cy="${g.y(best.readyReplicas)}" r="4" fill="var(--ready)"/>`;
+  const row = (k, v) => `<div class="row"><span>${k}</span><span>${v}</span></div>`;
+  tip.innerHTML = `<b>${clock(best.at)}</b>` + row("ready", best.readyReplicas) + row("target", best.specReplicas) +
+    row("forecast", "+" + best.forecastReplicas) + row("hints", "+" + best.hintReplicas);
+  const box = g0.closest("svg").getBoundingClientRect(), chart = g0.closest(".chart").getBoundingClientRect();
+  const px = (xx / W) * box.width;
+  tip.style.display = "block";
+  tip.style.left = Math.min(px + 12, chart.width - tip.offsetWidth - 4) + "px";
+  tip.style.top = "8px";
+}
+
+document.addEventListener("mousemove", (e) => {
+  const hit = e.target.closest && e.target.closest(".hit");
+  for (const name of Object.keys(hover)) if (!hit || hit.dataset.pool !== name) { delete hover[name]; drawCross(name); }
+  if (!hit) return;
+  const box = hit.ownerSVGElement.getBoundingClientRect();
+  const fx = ((e.clientX - box.left) / box.width * W - L) / (W - L - R);
+  hover[hit.dataset.pool] = Math.min(Math.max(fx, 0), 1);
+  drawCross(hit.dataset.pool);
+});
+
+async function tick() {
+  try {
+    const r = await fetch("/api/state", {cache: "no-store"});
+    if (!r.ok) throw new Error(r.status + " " + r.statusText);
+    state = await r.json();
+    render();
+    $("dot").classList.toggle("stale", !!state.error);
+    $("updated").textContent = state.error ? "refresh failing" : "live · " + clock(state.now);
+  } catch (err) {
+    $("dot").classList.add("stale");
+    $("updated").textContent = "disconnected: " + err.message;
+  }
+}
+tick();
+setInterval(tick, 1000);
+</script>
+</body>
+</html>

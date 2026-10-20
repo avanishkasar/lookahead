@@ -3,6 +3,10 @@
 //	lookahead hint create -n NS --pool POOL --replicas N [--in 30s] [--ttl 5m]
 //	lookahead hint list   -n NS [--pool POOL]
 //	lookahead hint delete -n NS NAME
+//	lookahead status -n NS [--pool POOL]
+//	lookahead watch  -n NS [--pool POOL] [--interval 1s]
+//	lookahead dashboard -n NS [--pool POOL] [--addr 127.0.0.1:8484]
+//	lookahead mcp [-n NS]
 //	lookahead trace generate --out FILE [trace flags]
 //	lookahead replay --trace FILE -n NS --pool POOL --strategy NAME --out FILE [--hints]
 //	lookahead report --out FILE RESULT.json...
@@ -33,6 +37,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	v1alpha1 "github.com/avanishkasar/lookahead/api/v1alpha1"
+	"github.com/avanishkasar/lookahead/internal/hints"
 	"github.com/avanishkasar/lookahead/internal/replay"
 	"github.com/avanishkasar/lookahead/internal/trace"
 )
@@ -51,7 +56,11 @@ const usage = `usage: lookahead <command> [flags]
 
 commands:
   hint create|list|delete   manage DemandHints
-  trace generate            write a synthetic claim trace (JSON Lines)
+  status                    show what lookahead is doing to each pool, and why
+  watch                     live terminal view of the same
+  dashboard                 live web view on localhost
+  mcp                       MCP server on stdio, for Claude Code, Codex and other agents
+  trace generate           write a synthetic claim trace (JSON Lines)
   replay                    replay a trace against the cluster and write results (JSON)
   report                    render results as a markdown benchmark table`
 
@@ -73,6 +82,14 @@ func run(ctx context.Context, args []string, out io.Writer) error {
 			return hintDelete(ctx, args[2:], out)
 		}
 		return fmt.Errorf("unknown hint command %q", args[1])
+	case "status":
+		return statusCmd(ctx, args[1:], out)
+	case "watch":
+		return watchCmd(ctx, args[1:], out)
+	case "dashboard":
+		return dashboardCmd(ctx, args[1:], out)
+	case "mcp":
+		return mcpCmd(ctx, args[1:])
 	case "trace":
 		if len(args) < 2 || args[1] != "generate" {
 			return errors.New("usage: lookahead trace generate [flags]")
@@ -124,18 +141,7 @@ func hintCreate(ctx context.Context, args []string, out io.Writer) error {
 	if err != nil {
 		return err
 	}
-	h := &v1alpha1.DemandHint{
-		ObjectMeta: metav1.ObjectMeta{Namespace: *ns, Name: *name},
-		Spec: v1alpha1.DemandHintSpec{
-			PoolRef:    v1alpha1.PoolReference{Name: *pool},
-			Replicas:   int32(*replicas),
-			NeededAt:   &metav1.Time{Time: time.Now().Add(*in)},
-			TTLSeconds: new(int32(ttl.Seconds())),
-		},
-	}
-	if *name == "" {
-		h.GenerateName = *pool + "-"
-	}
+	h := hints.Request{Namespace: *ns, Pool: *pool, Name: *name, Replicas: *replicas, In: *in, TTL: *ttl}.Object(time.Now())
 	if err := c.Create(ctx, h); err != nil {
 		return fmt.Errorf("create DemandHint: %w", err)
 	}
